@@ -132,6 +132,35 @@ restore_cache() {
 header "Restoring cache"
 restore_cache | output "$LOG_FILE"
 
+current_fingerprint() {
+  local asset_folder=$(read_json "$BUILD_DIR/package.json" ".fingerprintFolder")
+  echo $(tar -cf - $asset_folder | md5sum | awk '{print $1}')
+}
+
+fingerprints_dir() {
+  echo "${CACHE_DIR}/fingerprints/"
+}
+
+full_fingerprint_path() {
+  echo "$(fingerprints_dir)$(current_fingerprint)"
+}
+
+check_fingerprint() {
+  FULL_FINGERPRINT_PATH="$(full_fingerprint_path)"
+
+  echo "Full Fingerprint Path ${FULL_FINGERPRINT_PATH}"
+
+  if [ -e "$FULL_FINGERPRINT_PATH" ]; then
+    echo "Fingerprint exists, exiting..."
+    exit 1
+  else
+    echo "Fingerprint does not exist, continue compiling"
+  fi
+}
+
+header "Checking Current Fingerprints"
+check_fingerprint
+
 build_dependencies() {
   run_if_present 'heroku-prebuild'
   if $YARN; then
@@ -177,6 +206,15 @@ summarize_build() {
 
 header "Build succeeded!"
 summarize_build | output "$LOG_FILE"
+
+save_fingerprint() {
+  echo "Saving fingerprint"
+  mkdir -p $(fingerprints_dir)
+  touch $(full_fingerprint_path)
+}
+
+header "Saving fingerprint!"
+save_fingerprint | output "$LOG_FILE"
 
 warn_no_start "$LOG_FILE"
 warn_unmet_dep "$LOG_FILE"
