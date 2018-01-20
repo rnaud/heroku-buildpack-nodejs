@@ -178,6 +178,15 @@ build_dependencies() {
 header "Building dependencies"
 build_dependencies | output "$LOG_FILE"
 
+save_fingerprint() {
+  echo "Saving fingerprint"
+  mkdir -p $(fingerprints_dir)
+  touch $(full_fingerprint_path)
+}
+
+header "Saving fingerprint!"
+save_fingerprint | output "$LOG_FILE"
+
 cache_build() {
   local cache_directories=$(get_cache_directories)
 
@@ -206,15 +215,6 @@ summarize_build() {
 
 header "Build succeeded!"
 summarize_build | output "$LOG_FILE"
-
-save_fingerprint() {
-  echo "Saving fingerprint"
-  mkdir -p $(fingerprints_dir)
-  touch $(full_fingerprint_path)
-}
-
-header "Saving fingerprint!"
-save_fingerprint | output "$LOG_FILE"
 
 warn_no_start "$LOG_FILE"
 warn_unmet_dep "$LOG_FILE"
