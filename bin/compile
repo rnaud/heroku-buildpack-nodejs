@@ -134,7 +134,7 @@ restore_cache | output "$LOG_FILE"
 
 current_fingerprint() {
   local asset_folder=$(read_json "$BUILD_DIR/package.json" ".fingerprintFolder")
-  echo $(tar -cf - $asset_folder | md5sum | awk '{print $1}')
+  echo $(find $asset_folder -type f | sort -u | xargs cat | md5sum | awk '{print $1}')
 }
 
 fingerprints_dir() {
