@@ -138,7 +138,7 @@ current_fingerprint() {
 }
 
 fingerprints_dir() {
-  echo "${CACHE_DIR}/fingerprints/"
+  echo "${BUILD_DIR}/fingerprints/"
 }
 
 full_fingerprint_path() {
