@@ -179,7 +179,7 @@ header "Building dependencies"
 build_dependencies | output "$LOG_FILE"
 
 save_fingerprint() {
-  echo "Saving fingerprint"
+  echo "Saving fingerprint at $(full_fingerprint_path)"
   mkdir -p $(fingerprints_dir)
   touch $(full_fingerprint_path)
 }
